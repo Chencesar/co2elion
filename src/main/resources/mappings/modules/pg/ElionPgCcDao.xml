@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.elion.modules.pg.dao.ElionPgCcDao">
+    
+	<sql id="elionPgCcColumns">
+		a.id AS "id",
+		a.elion_pg_main_id AS "elionPgMain.id",
+		a.cc_rzhtl AS "ccRzhtl",
+		a.cc_ysthl AS "ccYsthl",
+		a.cc_vyl AS "ccVyl",
+		a.cc_tyhl AS "ccTyhl",
+		a.cc_lzcl AS "ccLzcl",
+		a.cc_lzhtl AS "ccLzhtl",
+		a.cc_fhcl AS "ccFhcl",
+		a.cc_fhhtl AS "ccFhhtl",
+		a.cc_ccxl AS "ccCcxl",
+		a.cc_rmxhl AS "ccRmxhl",
+		a.cc_grdl AS "ccGrdl",
+		a.cc_dlgrl AS "ccDlgrl",
+		a.cc_dlgrldw AS "ccDlgrldw",
+		a.cc_gdpf AS "ccGdpf",
+		a.cc_gdpfd AS "ccGdpfd",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="elionPgCcJoins">
+		LEFT JOIN elion_pg_main b ON b.id = a.elion_pg_main_id
+	</sql>
+    
+	<select id="get" resultType="ElionPgCc">
+		SELECT 
+			<include refid="elionPgCcColumns"/>
+		FROM elion_pg_cc a
+		<include refid="elionPgCcJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="ElionPgCc">
+		SELECT 
+			<include refid="elionPgCcColumns"/>
+		FROM elion_pg_cc a
+		<include refid="elionPgCcJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="elionPgMain != null and elionPgMain.id != null and elionPgMain.id != ''">
+				AND a.elion_pg_main_id = #{elionPgMain.id}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.create_date ASC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="ElionPgCc">
+		SELECT 
+			<include refid="elionPgCcColumns"/>
+		FROM elion_pg_cc a
+		<include refid="elionPgCcJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.create_date ASC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO elion_pg_cc(
+			id,
+			elion_pg_main_id,
+			cc_rzhtl,
+			cc_ysthl,
+			cc_vyl,
+			cc_tyhl,
+			cc_lzcl,
+			cc_lzhtl,
+			cc_fhcl,
+			cc_fhhtl,
+			cc_ccxl,
+			cc_rmxhl,
+			cc_grdl,
+			cc_dlgrl,
+			cc_dlgrldw,
+			cc_gdpf,
+			cc_gdpfd,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag
+		) VALUES (
+			#{id},
+			#{elionPgMain.id},
+			#{ccRzhtl},
+			#{ccYsthl},
+			#{ccVyl},
+			#{ccTyhl},
+			#{ccLzcl},
+			#{ccLzhtl},
+			#{ccFhcl},
+			#{ccFhhtl},
+			#{ccCcxl},
+			#{ccRmxhl},
+			#{ccGrdl},
+			#{ccDlgrl},
+			#{ccDlgrldw},
+			#{ccGdpf},
+			#{ccGdpfd},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE elion_pg_cc SET 	
+			cc_rzhtl = #{ccRzhtl},
+			cc_ysthl = #{ccYsthl},
+			cc_vyl = #{ccVyl},
+			cc_tyhl = #{ccTyhl},
+			cc_lzcl = #{ccLzcl},
+			cc_lzhtl = #{ccLzhtl},
+			cc_fhcl = #{ccFhcl},
+			cc_fhhtl = #{ccFhhtl},
+			cc_ccxl = #{ccCcxl},
+			cc_rmxhl = #{ccRmxhl},
+			cc_grdl = #{ccGrdl},
+			cc_dlgrl = #{ccDlgrl},
+			cc_dlgrldw = #{ccDlgrldw},
+			cc_gdpf = #{ccGdpf},
+			cc_gdpfd = #{ccGdpfd}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE elion_pg_cc SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		<choose>
+			<when test="id !=null and id != ''">
+				WHERE id = #{id}
+			</when>
+			<otherwise>
+				WHERE elion_pg_main_id = #{elionPgMain.id}
+			</otherwise>
+		</choose>
+	</update>
+	
+</mapper>

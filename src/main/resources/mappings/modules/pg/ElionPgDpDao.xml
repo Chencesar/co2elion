@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.elion.modules.pg.dao.ElionPgDpDao">
+    
+	<sql id="elionPgDpColumns">
+		a.id AS "id",
+		a.elion_pg_main_id AS "elionPgMain.id",
+		a.dp_name AS "dpName",
+		a.dp_data AS "dpData",
+		a.dp_dataunit AS "dpDataunit",
+		a.dp_ysyhl AS "dpYsyhl",
+		a.dp_calk AS "dpCalk",
+		a.dp_efk AS "dpEfk",
+		a.dp_efkunit AS "dpEfkunit",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="elionPgDpJoins">
+		LEFT JOIN elion_pg_main b ON b.id = a.elion_pg_main_id
+	</sql>
+    
+	<select id="get" resultType="ElionPgDp">
+		SELECT 
+			<include refid="elionPgDpColumns"/>
+		FROM elion_pg_dp a
+		<include refid="elionPgDpJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="ElionPgDp">
+		SELECT 
+			<include refid="elionPgDpColumns"/>
+		FROM elion_pg_dp a
+		<include refid="elionPgDpJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="elionPgMain != null and elionPgMain.id != null and elionPgMain.id != ''">
+				AND a.elion_pg_main_id = #{elionPgMain.id}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.create_date ASC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="ElionPgDp">
+		SELECT 
+			<include refid="elionPgDpColumns"/>
+		FROM elion_pg_dp a
+		<include refid="elionPgDpJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.create_date ASC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO elion_pg_dp(
+			id,
+			elion_pg_main_id,
+			dp_name,
+			dp_data,
+			dp_dataunit,
+			dp_ysyhl,
+			dp_calk,
+			dp_efk,
+			dp_efkunit,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag
+		) VALUES (
+			#{id},
+			#{elionPgMain.id},
+			#{dpName},
+			#{dpData},
+			#{dpDataunit},
+			#{dpYsyhl},
+			#{dpCalk},
+			#{dpEfk},
+			#{dpEfkunit},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE elion_pg_dp SET 	
+			elion_pg_main_id = #{elionPgMain.id},
+			dp_name = #{dpName},
+			dp_data = #{dpData},
+			dp_dataunit = #{dpDataunit},
+			dp_ysyhl = #{dpYsyhl},
+			dp_calk = #{dpCalk},
+			dp_efk = #{dpEfk},
+			dp_efkunit = #{dpEfkunit}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE elion_pg_dp SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		<choose>
+			<when test="id !=null and id != ''">
+				WHERE id = #{id}
+			</when>
+			<otherwise>
+				WHERE elion_pg_main_id = #{elionPgMain.id}
+			</otherwise>
+		</choose>
+	</update>
+	
+</mapper>

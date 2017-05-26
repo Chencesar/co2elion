@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.elion.modules.pg.dao.ElionPgRfDao">
+    
+	<sql id="elionPgRfColumns">
+		a.id AS "id",
+		a.elion_pg_main_id AS "elionPgMain.id",
+		a.rf_pfy AS "rfPfy",
+		a.rf_hsyl AS "rfHsyl",
+		a.rf_xhl AS "rfXhl",
+		a.rf_dwfrl AS "rfDwfrl",
+		a.rf_zjjs AS "rfZjjs",
+		a.rf_dwrzhtl AS "rfDwrzhtl",
+		a.rf_dyhl AS "rfDyhl",
+		a.rf_zjys AS "rfZjys",
+		a.rf_sum AS "rfSum",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="elionPgRfJoins">
+		LEFT JOIN elion_pg_main b ON b.id = a.elion_pg_main_id
+	</sql>
+    
+	<select id="get" resultType="ElionPgRf">
+		SELECT 
+			<include refid="elionPgRfColumns"/>
+		FROM elion_pg_rf a
+		<include refid="elionPgRfJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="ElionPgRf">
+		SELECT 
+			<include refid="elionPgRfColumns"/>
+		FROM elion_pg_rf a
+		<include refid="elionPgRfJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="elionPgMain != null and elionPgMain.id != null and elionPgMain.id != ''">
+				AND a.elion_pg_main_id = #{elionPgMain.id}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.create_date ASC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="ElionPgRf">
+		SELECT 
+			<include refid="elionPgRfColumns"/>
+		FROM elion_pg_rf a
+		<include refid="elionPgRfJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.create_date ASC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO elion_pg_rf(
+			id,
+			elion_pg_main_id,
+			rf_pfy,
+			rf_hsyl,
+			rf_xhl,
+			rf_dwfrl,
+			rf_zjjs,
+			rf_dwrzhtl,
+			rf_dyhl,
+			rf_zjys,
+			rf_sum,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag
+		) VALUES (
+			#{id},
+			#{elionPgMain.id},
+			#{rfPfy},
+			#{rfHsyl},
+			#{rfXhl},
+			#{rfDwfrl},
+			#{rfZjjs},
+			#{rfDwrzhtl},
+			#{rfDyhl},
+			#{rfZjys},
+			#{rfSum},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE elion_pg_rf SET 	
+			elion_pg_main_id = #{elionPgMain.id},
+			rf_pfy = #{rfPfy},
+			rf_hsyl = #{rfHsyl},
+			rf_xhl = #{rfXhl},
+			rf_dwfrl = #{rfDwfrl},
+			rf_zjjs = #{rfZjjs},
+			rf_dwrzhtl = #{rfDwrzhtl},
+			rf_dyhl = #{rfDyhl},
+			rf_zjys = #{rfZjys},
+			rf_sum = #{rfSum}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE elion_pg_rf SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		<choose>
+			<when test="id !=null and id != ''">
+				WHERE id = #{id}
+			</when>
+			<otherwise>
+				WHERE elion_pg_main_id = #{elionPgMain.id}
+			</otherwise>
+		</choose>
+	</update>
+	
+</mapper>
